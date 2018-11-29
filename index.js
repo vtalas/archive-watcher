@@ -1,10 +1,11 @@
+require('dotenv').config();
 const fs = require('fs');
-const JSZip = require("jszip");
+const JSZip = require('jszip');
 const format = require('xml-formatter');
 const watch = require('node-watch');
 
-const PATH_TO_WATCH = './public';
-const FILE = 'Document.xml';
+const PATH_TO_WATCH = process.env.ZIP_WATCHER_PATH || '../public';
+const FILE = process.env.ZIP_WATCHER_FILE || 'Document.xml';
 
 console.log(`Path to watch: ${PATH_TO_WATCH} \nFile to export: ${FILE}`);
 
@@ -25,7 +26,7 @@ const read = function(file) {
 
             const filesToExport = Object.keys(zip.files).filter(name => name === FILE);
 
-            filesToExport.forEach((fileName, index) => {
+            filesToExport.forEach(fileName => {
 
                 zip.file(fileName).async('nodebuffer').then(function(content) {
 
@@ -34,7 +35,7 @@ const read = function(file) {
                     console.log('WRITING ', path);
                     fs.writeFileSync(path, formatted);
                 });
-            })
+            });
         });
     });
 };
