@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "jszip": "^3.1.5",
+    "node-watch": "^0.5.9",
+    "xml-formatter": "^1.0.1"
+  }
+}
