@@ -6,6 +6,18 @@ const JSZip = require('jszip');
 const format = require('xml-formatter');
 const watch = require('node-watch');
 
+const  [,, ... args] = process.argv;
+
+const params = args.reduce((res, item) => { 
+    const parts = item.split('=');
+    res[parts[0].replace(/-/g, '')] = parts[1];
+    return res;
+}, {});
+
+if (!process.env.ARCHIVE_WATCHER_PATH && !params['path']) {
+    console.log('\n usage: archive-watcher --path=<path to watch> --file=<file from archive to be extracted> \n' )
+}
+
 const PATH_TO_WATCH = process.env.ARCHIVE_WATCHER_PATH || '../public';
 const FILE = process.env.ARCHIVE_WATCHER_FILE || 'Document.xml';
 
