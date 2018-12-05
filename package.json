@@ -1,6 +1,6 @@
 {
   "name": "archive-watcher",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "watches for changes of all zip files in folder. Extract specified xml file from the zip and saves it on disk when the the archive is changed.",
   "main": "index.js",
   "dependencies": {
@@ -12,6 +12,9 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "archive-watcher": "./index.js"
   },
   "keywords": [
     "xml",

@@ -1,11 +1,13 @@
+#!/usr/bin/env node
+
 require('dotenv').config();
 const fs = require('fs');
 const JSZip = require('jszip');
 const format = require('xml-formatter');
 const watch = require('node-watch');
 
-const PATH_TO_WATCH = process.env.ZIP_WATCHER_PATH || '../public';
-const FILE = process.env.ZIP_WATCHER_FILE || 'Document.xml';
+const PATH_TO_WATCH = process.env.ARCHIVE_WATCHER_PATH || '../public';
+const FILE = process.env.ARCHIVE_WATCHER_FILE || 'Document.xml';
 
 console.log(`Path to watch: ${PATH_TO_WATCH} \nFile to export: ${FILE}`);
 
