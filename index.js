@@ -25,14 +25,13 @@ const FILE = process.env.ARCHIVE_WATCHER_FILE || 'Document.xml';
 console.log(`Path to watch: ${PATH_TO_WATCH} \nFile to export: ${FILE}`);
 
 watch(PATH_TO_WATCH, { recursive: false }, function(evt, name) {
-    
+
     if (SUPPORTED_EXTENSIONS.includes(path.extname(name))){
         console.log('READING ', name);
+        read('./' + name);
     } else {
         console.log('SKIPPING ', name);
     }
-
-    read('./' + name);
 });
 
 const read = function(file) {
@@ -42,7 +41,13 @@ const read = function(file) {
     }
 
     fs.readFile(file, function(err, data) {
-        if (err) throw err;
+
+
+
+        if (err) {
+            console.log('ERROR ', file);
+            throw err;
+        }            
 
         JSZip.loadAsync(data).then(function(zip) {
 
@@ -58,6 +63,8 @@ const read = function(file) {
                     fs.writeFileSync(path, formatted);
                 });
             });
+        }, function(err) {
+            console.log(file, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", err);
         });
     });
 };
