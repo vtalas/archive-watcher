@@ -6,7 +6,7 @@ const JSZip = require('jszip');
 const format = require('xml-formatter');
 const watch = require('node-watch');
 const path = require('path');
-const SUPPORTED_EXTENSIONS = ['.zip', '.mmap'];
+const SUPPORTED_EXTENSIONS = ['.zip', '.mmap', '.mmas', '.mmat'];
 const  [,, ... args] = process.argv;
 
 const params = args.reduce((res, item) => { 
