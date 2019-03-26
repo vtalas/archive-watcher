@@ -7,26 +7,26 @@ const format = require('xml-formatter');
 const watch = require('node-watch');
 const path = require('path');
 const SUPPORTED_EXTENSIONS = ['.zip', '.mmap', '.mmas', '.mmat'];
-const  [,, ... args] = process.argv;
+const [, , ...args] = process.argv;
 
-const params = args.reduce((res, item) => { 
+const params = args.reduce((res, item) => {
     const parts = item.split('=');
     res[parts[0].replace(/-/g, '')] = parts[1];
     return res;
 }, {});
 
 if (!process.env.ARCHIVE_WATCHER_PATH && !params['path']) {
-    console.log('\n usage: archive-watcher --path=<path to watch> --file=<file from archive to be extracted> \n' )
+    console.log('\n usage: archive-watcher --path=<path to watch> --file=<file from archive to be extracted> \n');
 }
 
-const PATH_TO_WATCH = process.env.ARCHIVE_WATCHER_PATH || '../public';
-const FILE = process.env.ARCHIVE_WATCHER_FILE || 'Document.xml';
+const PATH_TO_WATCH = params['path'] || process.env.ARCHIVE_WATCHER_PATH || '../public';
+const FILE = params['file'] || process.env.ARCHIVE_WATCHER_FILE || 'Document.xml';
 
 console.log(`Path to watch: ${PATH_TO_WATCH} \nFile to export: ${FILE}`);
 
 watch(PATH_TO_WATCH, { recursive: false }, function(evt, name) {
 
-    if (SUPPORTED_EXTENSIONS.includes(path.extname(name))){
+    if (SUPPORTED_EXTENSIONS.includes(path.extname(name))) {
         console.log('READING ', name);
         read('./' + name);
     } else {
@@ -42,12 +42,10 @@ const read = function(file) {
 
     fs.readFile(file, function(err, data) {
 
-
-
         if (err) {
             console.log('ERROR ', file);
             throw err;
-        }            
+        }
 
         JSZip.loadAsync(data).then(function(zip) {
 
@@ -64,7 +62,7 @@ const read = function(file) {
                 });
             });
         }, function(err) {
-            console.log(file, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", err);
+            console.error(file, err);
         });
     });
 };
