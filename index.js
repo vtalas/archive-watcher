@@ -21,6 +21,7 @@ if (!process.env.ARCHIVE_WATCHER_PATH && !params['path']) {
 
 const PATH_TO_WATCH = params['path'] || process.env.ARCHIVE_WATCHER_PATH || '../public';
 const FILE = params['file'] || process.env.ARCHIVE_WATCHER_FILE || 'Document.xml';
+const FORMAT = params['format'] !== 'false' && params['format'] !== undefined;
 
 console.log(`Path to watch: ${PATH_TO_WATCH} \nFile to export: ${FILE}`);
 
@@ -55,10 +56,10 @@ const read = function(file) {
 
                 zip.file(fileName).async('nodebuffer').then(function(content) {
 
-                    const formatted = format(content.toString());
+                    const output = FORMAT ? format(content.toString()) : content;
                     const path = `${file}_${FILE}.xml`;
                     console.log('WRITING ', path);
-                    fs.writeFileSync(path, formatted);
+                    fs.writeFileSync(path, output);
                 });
             });
         }, function(err) {
