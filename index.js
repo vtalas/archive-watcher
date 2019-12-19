@@ -6,7 +6,7 @@ const JSZip = require('jszip');
 const format = require('xml-formatter');
 const watch = require('node-watch');
 const path = require('path');
-const SUPPORTED_EXTENSIONS = ['.zip', '.mmap', '.mmas', '.mmat'];
+const SUPPORTED_ARCHIVE_EXTENSIONS = ['.zip', '.mmap', '.mmas', '.mmat'];
 const [, , ...args] = process.argv;
 
 const params = args.reduce((res, item) => {
@@ -25,17 +25,25 @@ const FORMAT = params['format'] !== 'false' && params['format'] !== undefined;
 
 console.log(`Path to watch: ${PATH_TO_WATCH} \nFile to export: ${FILE}`);
 
-watch(PATH_TO_WATCH, { recursive: false }, function(evt, name) {
+const openWatcher = function() {
 
-    if (SUPPORTED_EXTENSIONS.includes(path.extname(name))) {
-        console.log('READING ', name);
-        read('./' + name);
-    } else {
-        console.log('SKIPPING ', name);
-    }
-});
+    return watch(PATH_TO_WATCH, { recursive: false }, function(evt, name) {
 
-const read = function(file) {
+        if (SUPPORTED_ARCHIVE_EXTENSIONS.includes(path.extname(name))) {
+            console.log('UNPACKING ', name);
+            unpack('./' + name);
+        } else if (name.includes(FILE)) {
+            console.log('UPDADE ARCHIVE ', name);
+            updateArchive(name);
+        } else {
+            console.log('SKIPPING ', name);
+        }
+    });
+};
+
+let watcher = openWatcher();
+
+const unpack = function(file) {
 
     if (!fs.existsSync(file)) {
         return;
@@ -67,3 +75,35 @@ const read = function(file) {
         });
     });
 };
+
+function updateArchive(file) {
+
+    const parts = file.split('_');
+    const archive = parts[0];
+    const zip = new JSZip();
+
+    fs.readFile(file, function(err, data) {
+
+        if (err) {
+            console.log('ERROR ', file);
+            throw err;
+        }
+
+        watcher.close();
+
+        zip
+            .file(FILE, data)
+            .generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+            .pipe(fs.createWriteStream(archive))
+            .on('finish', function() {
+
+                setTimeout(function() {
+                    watcher = openWatcher()
+                }, 500);
+
+                // console.log('write zIP', archive);
+            });
+    });
+
+
+}
