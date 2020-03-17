@@ -34,7 +34,7 @@ const openWatcher = function() {
             unpack('./' + name);
         } else if (name.includes(FILE)) {
             console.log('UPDADE ARCHIVE ', name);
-            updateArchive(name);
+            // updateArchive(name);
         } else {
             console.log('SKIPPING ', name);
         }
@@ -85,8 +85,7 @@ function updateArchive(file) {
     fs.readFile(file, function(err, data) {
 
         if (err) {
-            console.log('ERROR ', file);
-            throw err;
+            console.log('UPDATE ARCHIVE ERR ', file);
         }
 
         watcher.close();
@@ -98,10 +97,15 @@ function updateArchive(file) {
             .on('finish', function() {
 
                 setTimeout(function() {
-                    watcher = openWatcher()
+                    watcher = openWatcher();
                 }, 500);
 
                 // console.log('write zIP', archive);
+            })
+            .on('error', function(err) {
+
+
+                console.log('ksdkjfndskjfn', err);
             });
     });
 
