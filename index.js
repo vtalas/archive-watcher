@@ -65,7 +65,6 @@ const unpack = function(file) {
                 zip.file(fileName).async('nodebuffer').then(function(content) {
 
                     const output = FORMAT ? format(content.toString().replace('<?xml-client name="MindManager" version="20.1.192" platform="Windows"?>', '')) : content;
-                    console.log(output, content.toString().substr(0, 1000));
 
                     const path = `${file}_${FILE}.xml`;
                     console.log('WRITING ', path);
