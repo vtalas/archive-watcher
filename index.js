@@ -3,7 +3,8 @@
 require('dotenv').config();
 const fs = require('fs');
 const JSZip = require('jszip');
-const format = require('xml-formatter');
+// const format = require('xml-formatter');
+const format = require('./xml-formatter-update');
 const watch = require('node-watch');
 const path = require('path');
 const SUPPORTED_ARCHIVE_EXTENSIONS = ['.zip', '.mmap', '.mmas', '.mmat'];
@@ -21,7 +22,9 @@ if (!process.env.ARCHIVE_WATCHER_PATH && !params['path']) {
 
 const PATH_TO_WATCH = params['path'] || process.env.ARCHIVE_WATCHER_PATH || '../public';
 const FILE = params['file'] || process.env.ARCHIVE_WATCHER_FILE || 'Document.xml';
-const FORMAT = params['format'] !== 'false' && params['format'] !== undefined;
+
+// default true
+const FORMAT = (params['format'] !== 'false' && params['format'] !== undefined) ? false : true;
 
 console.log(`Path to watch: ${PATH_TO_WATCH} \nFile to export: ${FILE}`);
 
@@ -32,9 +35,6 @@ const openWatcher = function() {
         if (SUPPORTED_ARCHIVE_EXTENSIONS.includes(path.extname(name))) {
             console.log('UNPACKING ', name);
             unpack('./' + name);
-        } else if (name.includes(FILE)) {
-            console.log('UPDADE ARCHIVE ', name);
-            // updateArchive(name);
         } else {
             console.log('SKIPPING ', name);
         }
@@ -64,11 +64,20 @@ const unpack = function(file) {
 
                 zip.file(fileName).async('nodebuffer').then(function(content) {
 
-                    const output = FORMAT ? format(content.toString().replace('<?xml-client name="MindManager" version="20.1.192" platform="Windows"?>', '')) : content;
-
                     const path = `${file}_${FILE}.xml`;
                     console.log('WRITING ', path);
-                    fs.writeFileSync(path, output);
+                    fs.writeFileSync(path, content);
+
+                    if (FORMAT) {
+
+                        const output = format(content.toString().replace('<?xml-client name="MindManager" version="21.1.186" platform="Windows"?>', ''), {
+                            indentation: '  ',
+                            collapseContent: true
+                        })
+                        const path = `${file}_${FILE}_formatted.xml`;
+                        console.log('WRITING FORMATTED', path);
+                        fs.writeFileSync(path, output);
+                    }
                 });
             });
         }, function(err) {
@@ -104,9 +113,7 @@ function updateArchive(file) {
                 // console.log('write zIP', archive);
             })
             .on('error', function(err) {
-
-
-                console.log('ksdkjfndskjfn', err);
+                console.log('error', err);
             });
     });
 

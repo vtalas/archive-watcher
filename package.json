@@ -4,10 +4,10 @@
   "description": "watches for changes of all zip files in folder. Extract specified xml file from the zip and saves it on disk when the the archive is changed.",
   "main": "index.js",
   "dependencies": {
-    "dotenv": "6.1.0",
-    "jszip": "3.1.5",
-    "node-watch": "0.6.0",
-    "xml-formatter": "1.2.0"
+    "dotenv": "8.2.0",
+    "jszip": "3.5.0",
+    "node-watch": "0.7.1",
+    "xml-formatter": "2.4.0"
   },
   "devDependencies": {},
   "scripts": {
