@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+console.log('archive watcher')
+
 require('dotenv').config();
 const fs = require('fs');
 const JSZip = require('jszip');
